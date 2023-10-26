@@ -39,7 +39,20 @@ To get a local copy of the project up and running, follow these steps:
    cd spring-security-jwt
    ```
 
-3. Build the project and Run the application
+3. Create a user named 'dynamic' with password 'dynamic'
+
+   ```sh
+   sudo -u postgres createuser --pwprompt dynamic
+   ```
+
+4. Create a database named 'springsecurity' and give permissions to the user 'dynamic'
+
+   ```sh
+   sudo -u postgres createdb -O dynamic springsecurity
+   sudo -u postgres psql -c 'GRANT ALL ON DATABASE springsecurity TO dynamic;'
+   ```
+
+5. Build the project and Run the application
 
    ```sh
    mvn clean spring-boot:run
@@ -47,9 +60,53 @@ To get a local copy of the project up and running, follow these steps:
 
 ## Usage
 
-Once the application is running, open your web browser and navigate to http://localhost:8081. You should see a "Hello, World!" message displayed.
+### Admin Registration
 
-Feel free to modify the message or explore the code to understand how the Spring Boot application is structured.
+```sh
+curl -X POST -H "Content-Type: application/json" -d '{"username":"admin","password":"123456"}' http://localhost:8080/api/v1/adminRegister -w "\n"
+```
+
+### Admin Login
+
+```sh
+curl -X POST -H "Content-Type: application/json" -d '{"username":"admin","password":"123456"}' http://localhost:8080/api/v1/adminLogin -w "\n"
+```
+
+### Teacher Registration
+
+After Login with Admin Creds, you will get a bearer token use that token below to register a teacher.
+
+```sh
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer <TOKEN>" -d '{"username":"teacher","email":"teacher@gmail.com","password":"123456"}' http://localhost:8080/api/v1/admin/register -w "\n"
+```
+
+### Teacher Login
+
+```sh
+curl -X POST -H "Content-Type: application/json" -d '{"email":"teacher@gmail.com","password":"123456"}' http://localhost:8080/api/v1/teacherLogin -w "\n"
+```
+
+### Public Api
+
+After Login with Teacher Creds, you will get a bearer token use that token below to access that API.
+
+```sh
+curl -H "Authorization: Bearer <TOKEN>" http://localhost:8080/api/public/ -w "\n"
+```
+
+### Student Registration
+
+```sh
+curl -X POST -H "Content-Type: application/json" -d '{"username" : "student", "email":"student@gmail.com","password":"123456"}' http://localhost:8080/api/v1/studentRegister -w "\n"
+```
+
+### Student Login
+
+```sh
+curl -X POST -H "Content-Type: application/json" -d '{"email":"student@gmail.com","password":"123456"}' http://localhost:8080/api/v1/studentLogin -w "\n"
+```
+
+Feel free to explore the code to understand how the Spring Boot application is structured.
 
 ## Contributing
 
