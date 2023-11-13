@@ -1,5 +1,6 @@
 package com.examportal.security;
 
+import java.security.Key;
 import java.util.Date;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
@@ -7,6 +8,8 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtGenerator {
@@ -21,35 +24,47 @@ public class JwtGenerator {
 				.setSubject(username)
 				.setIssuedAt(currentDate)
 				.setExpiration(expiryDate)
-				.signWith(SignatureAlgorithm.HS256, SecurityConstants.JWT_SECERT)
+				.signWith(getSignKey(), SignatureAlgorithm.HS256)
 				.claim("usertype", userType)
 				.compact();
 		return token;
 	}
 
 	public String getUsernameFromJWT(String token) {
-		Claims claims = Jwts.parser()
-				.setSigningKey(SecurityConstants.JWT_SECERT)
-				.parseClaimsJws(token)
-				.getBody();
+		Claims claims = Jwts.parserBuilder()
+		        .setSigningKey(getSignKey())
+		        .build()
+		        .parseClaimsJws(token)
+		        .getBody();
+
 		return claims.getSubject();
 	}
 
 	public String getUserTypeFromJWT(String token) {
-		Claims claims = Jwts.parser()
-				.setSigningKey(SecurityConstants.JWT_SECERT)
-				.parseClaimsJws(token)
-				.getBody();
+		Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSignKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
 		return claims.get("usertype").toString();
 	}
 
 	public boolean validateToken(String token) {
 		try {
-			Jwts.parser().setSigningKey(SecurityConstants.JWT_SECERT).parseClaimsJws(token);
-			return true;
+    		    Jwts.parserBuilder()
+                .setSigningKey(getSignKey())
+                .build()
+                .parseClaimsJws(token);
+            return true;
 		}
 		catch (Exception ex) {
 			throw new AuthenticationCredentialsNotFoundException("JWT token is not valid " + token);
 		}
 	}
+
+	private Key getSignKey() {
+        byte[] keyBytes= Decoders.BASE64.decode(SecurityConstants.JWT_SECERT);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 }
