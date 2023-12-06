@@ -34,12 +34,11 @@ public class SecurityConfig {
 			.and()
 			.authorizeHttpRequests()
 			.requestMatchers("/api/public/**").hasAuthority(UserType.TEACHER.toString())
-			.requestMatchers("/api/v1/adminRegister").permitAll()
-			.requestMatchers("/api/v1/adminLogin").permitAll()
-			.requestMatchers("/api/v1/teacherLogin").permitAll()
-			.requestMatchers("/api/v1/studentRegister").permitAll()
-			.requestMatchers("/api/v1/studentLogin").permitAll()
 			.requestMatchers("/api/v1/admin/**").hasAuthority(UserType.ADMIN.toString())
+			.requestMatchers(
+			        "/api/v1/adminRegister", "/api/v1/adminLogin", "/api/v1/teacherLogin",
+			        "/api/v1/studentRegister", "/api/v1/studentLogin")
+			.permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.httpBasic();
