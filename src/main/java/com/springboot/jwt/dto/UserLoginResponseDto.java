@@ -9,8 +9,6 @@ import lombok.Setter;
 @Setter
 public class UserLoginResponseDto {
 
-    private boolean success;
-    private String message;
     private String token;
     private UserEntity user;
 }

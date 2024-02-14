@@ -1,17 +1,29 @@
 package com.springboot.jwt.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.springboot.jwt.dto.UserAuthDto;
+import com.springboot.jwt.dto.UserLoginResponseDto;
+import com.springboot.jwt.exception.BadRequestException;
 import com.springboot.jwt.exception.NotFoundException;
 import com.springboot.jwt.model.UserEntity;
+import com.springboot.jwt.model.UserType;
 import com.springboot.jwt.repository.UserRepo;
+import com.springboot.jwt.security.JwtGenerator;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtGenerator jwtGenerator;
 
     @Override
     public UserEntity findById(Long id) {
@@ -31,7 +43,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity save(UserEntity userEntity) {
-        return userRepo.save(userEntity);
+    public String regUser(UserAuthDto userAuthDto) {
+        if (existsByUsername(userAuthDto.getUsername())) {
+            throw new BadRequestException("Username is already registered !!");
+        }
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUsername(userAuthDto.getUsername());
+        userEntity.setPassword(passwordEncoder.encode(userAuthDto.getPassword()));
+        userRepo.save(userEntity);
+        return "User Register successfull !!";
+    }
+
+    @Override
+    public UserLoginResponseDto loginUser(UserAuthDto userAuthDto) {
+        String token = jwtGenerator.generateToken(userAuthDto.getUsername(), UserType.USER.toString());
+        UserEntity user = findByUsername(userAuthDto.getUsername());
+
+        UserLoginResponseDto responseDto = new UserLoginResponseDto();
+        responseDto.setToken(token);
+        responseDto.setUser(user);
+        return responseDto;
     }
 }
