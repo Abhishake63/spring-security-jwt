@@ -8,6 +8,7 @@ public interface AdminService {
 
     AdminEntity findByUsername(String username);
     Boolean existsByUsername(String username);
+
     String regAdmin(AdminAuthDto adminAuthDto);
     AdminLoginResponseDto loginAdmin(AdminAuthDto adminAuthDto);
 }
