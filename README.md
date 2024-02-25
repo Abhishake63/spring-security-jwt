@@ -1,6 +1,6 @@
 # Spring Boot JWT Project
 
-Welcome to the Spring Boot "JWT" project! This is a simple project that demonstrates the features of Spring Security.
+Welcome to our guide on implementing token-based authentication with Spring Boot and Spring Security using JSON Web Tokens (JWT). In this tutorial, we'll walk you through the process of setting up a secure authentication system for your Spring Boot application, allowing users to register, log in, and access protected resources using JWT-based authentication.
 
 ## Table of Contents
 
