@@ -3,7 +3,6 @@ package com.springboot.jwt.security;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -18,24 +17,23 @@ import com.springboot.jwt.model.UserType;
 import com.springboot.jwt.service.AdminService;
 import com.springboot.jwt.service.UserService;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Service
+@Getter
+@Setter
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
+    private UserType userType;
     private AdminService adminService;
-
-    @Autowired
     private UserService userService;
 
-    private UserType userType;
-
-    public UserType getUserType() {
-        return userType;
+    CustomUserDetailsService(AdminService adminService, UserService userService) {
+        this.adminService = adminService;
+        this.userService = userService;
     }
 
-    public void setUserType(UserType userType) {
-        this.userType = userType;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

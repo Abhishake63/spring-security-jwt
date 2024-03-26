@@ -1,6 +1,5 @@
 package com.springboot.jwt.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,11 +17,13 @@ import com.springboot.jwt.service.UserService;
 @RequestMapping("/auth/user")
 public class AuthController {
 
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private AuthenticationService authenticationService;
+
+    AuthController(UserService userService, AuthenticationService authenticationService) {
+        this.userService = userService;
+        this.authenticationService = authenticationService;
+    }
 
     @PostMapping("/reg")
     @ResponseStatus(HttpStatus.CREATED)
