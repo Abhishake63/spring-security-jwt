@@ -1,6 +1,5 @@
 package com.springboot.jwt.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +15,15 @@ import com.springboot.jwt.security.JwtGenerator;
 @Service
 public class AdminServiceImpl implements AdminService {
 
-    @Autowired
     private AdminRepo adminRepo;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private JwtGenerator jwtGenerator;
+
+    AdminServiceImpl(AdminRepo adminRepo, PasswordEncoder passwordEncoder, JwtGenerator jwtGenerator) {
+        this.adminRepo = adminRepo;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtGenerator = jwtGenerator;
+    }
 
     @Override
     public AdminEntity findByUsername(String username) {
